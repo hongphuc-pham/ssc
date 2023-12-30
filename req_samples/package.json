@@ -1,0 +1,24 @@
+{
+    "name": "your-web-app",
+    "version": "1.0.0",
+    "description": "Your Web Application Description",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "body-parser": "^1.19.0",
+      "cookie-parser": "^1.4.5",
+      "express-session": "^1.17.2",
+      "passport": "^0.4.1",
+      "passport-local": "^1.0.0",
+      "bcrypt": "^5.0.1"
+    },
+    "devDependencies": {
+    },
+    "engines": {
+      "node": ">=14.0.0"
+    }
+  }
+  
