@@ -48,4 +48,4 @@ jobs:
       with:
         file: './getting-started-app/Dockerfile'
         push: true
-        tags: user/app:latest
+        tags: fufan/ssc:latest
