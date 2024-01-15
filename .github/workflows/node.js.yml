@@ -11,6 +11,9 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: ./getting-started-app
 
     runs-on: ubuntu-latest
 
