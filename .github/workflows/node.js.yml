@@ -3,6 +3,10 @@
 
 name: Node.js CI
 
+env:
+  IMAGE_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 on:
   push:
     branches: [ "main", "gh-action-test" ]
@@ -17,16 +21,16 @@ jobs:
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: ./getting-started-app/
-
-    runs-on: ubuntu-latest
-    
     outputs:
       image: ${{ steps.build.outputs.image }}
       digest: ${{ steps.build.outputs.digest }}
-
+      
+    defaults:
+      run:
+        working-directory: ./getting-started-app/
+      
+    runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v3
 
@@ -36,6 +40,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './getting-started-app/package-lock.json'
+        
     - run: npm install
     - run: npm ci
     - run: npm run build --if-present
@@ -46,6 +51,7 @@ jobs:
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
+        registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -53,7 +59,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # v4.0.1
       with:
-        images: fufan/ssc:latest
+        images: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
         
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -67,7 +73,7 @@ jobs:
       run: |
         # NOTE: Set the image as an output because the `env` context is not
         # available to the inputs of a reusable workflow call.
-        image_name="fufan/ssc"
+        image_name="${IMAGE_REGISTRY}/${IMAGE_NAME}"
         echo "image=$image_name" >> "$GITHUB_OUTPUT"
         
     - name: Install Cosign
