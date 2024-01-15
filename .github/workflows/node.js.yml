@@ -47,5 +47,6 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
+        file: './getting-started-app/Dockerfile'
         push: true
         tags: user/app:latest
