@@ -43,13 +43,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './getting-started-app/package-lock.json'
-        
-    - name: Checkout the repository
-      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.3.4    
       
     - run: npm install
     - run: npm ci
     - run: npm run build --if-present
+
+    - name: Checkout the repository
+      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.3.4    
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # v2.0.0
@@ -59,7 +59,7 @@ jobs:
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -84,13 +84,6 @@ jobs:
         image_name="fufan/ssc"
         echo "image=$image_name" >> "$GITHUB_OUTPUT"
         
-    - name: Install Cosign
-      uses: sigstore/cosign-installer@v3.3.0
-      with:
-        cosign-release: 'v2.2.2'
-        
-    - name: Check install!
-      run: cosign version
 
   provenance:
     needs: [build]
@@ -104,4 +97,4 @@ jobs:
       digest: ${{ needs.build.outputs.digest }}
       registry-username: fufan
     secrets:
-      registry-password: ${{ secrets.GITHUB_TOKEN }}
+      registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
