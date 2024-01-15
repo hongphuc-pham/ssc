@@ -3,10 +3,6 @@
 
 name: Node.js CI
 
-env:
-  IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 on:
   push:
     branches: [ "main", "gh-action-test" ]
@@ -44,30 +40,15 @@ jobs:
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
-        registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # v4.0.1
-      with:
-        images: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
-    
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
         file: './getting-started-app/Dockerfile'
         push: true
         tags: fufan/ssc:latest
-
-    - name: Output image
-      id: image
-      run: |
-        # NOTE: Set the image as an output because the `env` context is not
-        # available to the inputs of a reusable workflow call.
-        image_name="${IMAGE_REGISTRY}/${IMAGE_NAME}"
-        echo "image=$image_name" >> "$GITHUB_OUTPUT"
     
     - name: Install Cosign
       uses: sigstore/cosign-installer@v3.3.0
@@ -85,11 +66,11 @@ jobs:
       packages: write # for uploading attestations.
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
-      image: ${{ needs.build.outputs.image }}
+      image: "docker"
       # The image digest is used to prevent TOCTOU issues.
       # This is an output of the docker/build-push-action
       # See: https://github.com/slsa-framework/slsa-verifier#toctou-attacks
-      digest: ${{ needs.build.outputs.digest }}
+      digest: "sha256:bbfaaaf3a504b095e90f3310d508320a30ac56797178a90c989e704840e26dbb"
       registry-username: ${{ github.actor }}
     secrets:
       registry-password: ${{ secrets.GITHUB_TOKEN }}
