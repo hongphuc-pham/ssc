@@ -30,6 +30,9 @@ jobs:
         working-directory: ./getting-started-app/
       
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['19.x']
     
     steps:
     - uses: actions/checkout@v3
