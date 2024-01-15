@@ -6,6 +6,8 @@ name: Node.js CI
 env:
   IMAGE_REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 on:
   push:
@@ -100,6 +102,6 @@ jobs:
     with:
       image: ${{ needs.build.outputs.image }}
       digest: ${{ needs.build.outputs.digest }}
-      registry-username: ${{ secrets.DOCKERHUB_USERNAME }}}
+      registry-username: ${{ env.DOCKERHUB_USERNAME }}}
     secrets:
-      registry-password: ${{ secrets.GITHUB_TOKEN }}
+      registry-password: ${{ env.GITHUB_TOKEN }}
