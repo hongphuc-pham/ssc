@@ -58,8 +58,8 @@ jobs:
       uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b # v2.0.0
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -71,17 +71,17 @@ jobs:
       uses: docker/build-push-action@e551b19e49efd4e98792db7592c17c09b89db8d8 # v3.0.0
       id: build
       with:
-        file: './getting-started-app/Dockerfile'
+        # file: './getting-started-app/Dockerfile'
         push: true
-        tags: latest
-        labels: fufan/ssc
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
 
     - name: Output image
       id: image
       run: |
         # NOTE: Set the image as an output because the `env` context is not
         # available to the inputs of a reusable workflow call.
-        image_name="fufan/ssc"
+        image_name="${IMAGE_REGISTRY}/${IMAGE_NAME}"
         echo "image=$image_name" >> "$GITHUB_OUTPUT"
         
 
@@ -95,6 +95,6 @@ jobs:
     with:
       image: ${{ needs.build.outputs.image }}
       digest: ${{ needs.build.outputs.digest }}
-      registry-username: fufan
+      registry-username: ${{ github.actor }}
     secrets:
-      registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
