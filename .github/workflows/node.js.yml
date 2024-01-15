@@ -98,7 +98,7 @@ jobs:
       packages: write # for uploading attestations.
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
-      image: ${{ needs.build.outputs.image }}
+      image: fufan/ssc:latest
       digest: ${{ needs.build.outputs.digest }}
       registry-username: fufan
     secrets:
