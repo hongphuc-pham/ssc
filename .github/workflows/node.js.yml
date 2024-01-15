@@ -3,10 +3,6 @@
 
 name: Node.js CI
 
-env:
-  IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 on:
   push:
     branches: [ "main", "gh-action-test" ]
@@ -51,28 +47,14 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # v4.0.1
-      with:
-        images: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
-        
     - name: Build and push
       uses: docker/build-push-action@e551b19e49efd4e98792db7592c17c09b89db8d8
       id: build
       with:
         file: './getting-started-app/Dockerfile'
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ssc:latest
     
-    - name: Install Cosign
-      uses: sigstore/cosign-installer@v3.3.0
-      with:
-        cosign-release: 'v2.2.2'
-        
-    - name: Check install!
-      run: cosign version
 
   provenance:
     needs: [build]
