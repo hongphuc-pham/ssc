@@ -48,14 +48,28 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@69f6fc9d46f2f8bf0d5491e4aabe0bb8c6a4678a # v4.0.1
+      with:
+        images: fufan/ssc:latest
         
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
         file: './getting-started-app/Dockerfile'
         push: true
-        tags: fufan/ssc:latest
-    
+        tags: latest
+
+    - name: Output image
+      id: image
+      run: |
+        # NOTE: Set the image as an output because the `env` context is not
+        # available to the inputs of a reusable workflow call.
+        image_name="fufan/ssc"
+        echo "image=$image_name" >> "$GITHUB_OUTPUT"
+        
     - name: Install Cosign
       uses: sigstore/cosign-installer@v3.3.0
       with:
