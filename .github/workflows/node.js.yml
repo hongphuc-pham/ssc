@@ -8,9 +8,6 @@ on:
     branches: [ "main", "gh-action-test" ]
   pull_request:
     branches: [ "main" ]
-    
-permissions:
-  contents: read
 
 jobs:
   build:
@@ -43,18 +40,23 @@ jobs:
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
-        registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+        
     - name: Build and push
-      uses: docker/build-push-action@e551b19e49efd4e98792db7592c17c09b89db8d8
-      id: build
+      uses: docker/build-push-action@v5
       with:
         file: './getting-started-app/Dockerfile'
         push: true
-        tags: ssc:latest
+        tags: fufan/ssc:latest
     
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@v3.3.0
+      with:
+        cosign-release: 'v2.2.2'
+        
+    - name: Check install!
+      run: cosign version
 
   provenance:
     needs: [build]
@@ -64,8 +66,11 @@ jobs:
       packages: write # for uploading attestations.
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
-      image: ${{ needs.build.outputs.image }}
-      digest: ${{ needs.build.outputs.digest }}
-      registry-username: ${{ secrets.DOCKERHUB_USERNAME}}
+      image: "docker"
+      # The image digest is used to prevent TOCTOU issues.
+      # This is an output of the docker/build-push-action
+      # See: https://github.com/slsa-framework/slsa-verifier#toctou-attacks
+      digest: "sha256:bbfaaaf3a504b095e90f3310d508320a30ac56797178a90c989e704840e26dbb"
+      registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
     secrets:
       registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
