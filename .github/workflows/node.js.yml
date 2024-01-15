@@ -16,6 +16,8 @@ jobs:
         working-directory: ./getting-started-app/
 
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.image }}
 
     strategy:
       matrix:
@@ -67,9 +69,6 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
       image: ${{ needs.build.outputs.image }}
-      # The image digest is used to prevent TOCTOU issues.
-      # This is an output of the docker/build-push-action
-      # See: https://github.com/slsa-framework/slsa-verifier#toctou-attacks
       digest: ${{ needs.build.outputs.digest }}
       registry-username: ${{ github.actor }}
     secrets:
