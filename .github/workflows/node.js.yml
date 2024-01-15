@@ -102,4 +102,4 @@ jobs:
       digest: ${{ needs.build.outputs.digest }}
       registry-username: fufan
     secrets:
-      registry-password: ${{ env.GITHUB_TOKEN }}
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
