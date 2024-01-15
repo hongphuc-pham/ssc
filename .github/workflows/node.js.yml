@@ -64,12 +64,10 @@ jobs:
       actions: read # for detecting the Github Actions environment.
       id-token: write # for creating OIDC tokens for signing.
       packages: write # for uploading attestations.
-    needs: args
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
-      image: "bash"
-      # The image digest is used to prevent TOCTOU issues.
-      # This is an output of the docker/build-push-action
-      # See: https://github.com/slsa-framework/slsa-verifier#toctou-attacks
-      digest: "sha256:bbfaaaf3a504b095e90f3310d508320a30ac56797178a90c989e704840e26dbb"
-      config-path: ".github/configs-docker/config.toml"
+      image: ${{ needs.build.outputs.image }}
+      digest: ${{ needs.build.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
