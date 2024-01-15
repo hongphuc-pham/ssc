@@ -1,0 +1,38 @@
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Node.js dependencies
+node_modules/
+
+# Compiled files
+dist/
+*.log
+*.out
+*.tmp
+*.temp
+
+# Environment configuration files
+.env
+.env.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+
+# Logs and databases
+*.sqlite
+*.db
+
+# Minified files
+*.min.js
+*.min.css
+
+# Temporary directories
+.tmp/
+.temp/
