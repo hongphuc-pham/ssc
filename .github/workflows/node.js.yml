@@ -66,11 +66,11 @@ jobs:
       packages: write # for uploading attestations.
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.9.0
     with:
-      image: "docker"
+      image: ${{ needs.build.outputs.image }}
       # The image digest is used to prevent TOCTOU issues.
       # This is an output of the docker/build-push-action
       # See: https://github.com/slsa-framework/slsa-verifier#toctou-attacks
-      digest: "sha256:bbfaaaf3a504b095e90f3310d508320a30ac56797178a90c989e704840e26dbb"
-      registry-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      digest: ${{ needs.build.outputs.digest }}
+      registry-username: ${{ github.actor }}
     secrets:
-      registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
