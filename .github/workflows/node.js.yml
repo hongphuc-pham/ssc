@@ -45,10 +45,12 @@ jobs:
         
     - name: Build and push
       uses: docker/build-push-action@v5
+      id: build
       with:
         file: './getting-started-app/Dockerfile'
         push: true
-        tags: fufan/ssc:latest
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
     
     - name: Install Cosign
       uses: sigstore/cosign-installer@v3.3.0
