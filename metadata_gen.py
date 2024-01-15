@@ -61,29 +61,22 @@ def generate_bom_from_file(fpath):
         raise FileNotFoundError(f"Error: File not found at {fpath}")
     
     try:
-        if fpath.endswith(".txt"):
+        if any(fpath.endswith(ext) for ext in [".txt", ".csv", ".json"]):
             
             # Generate requirements.txt using pip freeze
-            subprocess.run(["pip", "freeze", ">", fpath], check=True)
+            # subprocess.run(["pip", "freeze", ">", fpath], check=True)
             
             # Generate SBOM using cyclonedx-py
-            subprocess.run(["cyclonedx-py", "-r", "-i", fpath, "-o", "sbom.xml"], check=True)
+            subprocess.run(["cyclonedx-py", "-r", "-i", fpath, "-o", "sbom.json", '--format', 'json'], check=True)
+            
 
             print("SBOM generated successfully:", "sbom.xml")
-
-        elif fpath.endswith(".json"):
-            with open(fpath, "r") as f:
-                package_data = json.load(f)
-                dependencies = package_data.get("dependencies", {})
-
-                bom = cyclonedx.bom.Bom()
-                # ... create BOM components from dependencies
 
         else:
             raise ValueError("Invalid input file format")
 
-        bom.write("bom.xml")
-        return bom
+        # bom.write("bom.xml")
+        # return bom
     except Exception as e:
         print(f"Error generating BOM: {e}", file=sys.stderr)
         sys.exit(1)
@@ -121,13 +114,13 @@ def txt_req_extract(fpath):
 
 if __name__ == "__main__":
     input_file = sys.argv[1]
-    # generate_bom_from_file(input_file)
+    generate_bom_from_file(input_file)
     # generate_layout(input_file)
     # print(txt_req_extract(input_file))
-    requirements = read_requirements(input_file)
+    # requirements = read_requirements(input_file)
 
     # Generate metadata layout
-    metadata_layout = generate_metadata_layout(requirements)
+    # metadata_layout = generate_metadata_layout(requirements)
 
     # Write metadata layout to a file
     layout_file = 'metadata_layout'
