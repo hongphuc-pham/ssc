@@ -3,6 +3,10 @@
 
 name: Node.js CI
 
+env:
+  IMAGE_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 on:
   push:
     branches: [ "main", "gh-action-test" ]
